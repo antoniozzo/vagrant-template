@@ -19,6 +19,11 @@ Vagrant.configure("2") do |config|
 			v.customize ["modifyvm", :id, "--memory", pMEM]
 		end
 
-		config.vm.provision :shell, path: "provision/setup.sh"
+		config.vm.provision :shell, path: "provision/server.sh"
+		#pGIT config.vm.provision :shell, path: "provision/git.sh"
+		#pNODE config.vm.provision :shell, path: "provision/node.sh"
+		#pPHP config.vm.provision :shell, path: "provision/php.sh"
+		#pCOMPOSER config.vm.provision :shell, path: "provision/composer.sh"
+		#pMYSQL config.vm.provision :shell, path: "provision/mysql.sh"
 	end
 end

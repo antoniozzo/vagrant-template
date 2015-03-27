@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-read -p "Enter public dir for vhost: [Default: /var/www/public]" PUBLIC_DIR
-PUBLIC_DIR=${PUBLIC_DIR:-/var/www/public}
+PUBLIC_DIR='pPUBDIR'
 
 echo "Adding repositories.."
 sudo add-apt-repository -y ppa:ondrej/php5-5.6
