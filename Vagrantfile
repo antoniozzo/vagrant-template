@@ -3,9 +3,9 @@
 
 Vagrant.configure("2") do |config|
 	config.vm.define :pNAME do |config|
-		config.vm.box = "pBOX"
+		config.vm.box = "pBOXNAME"
 		config.vm.box_url = "pBOXURL"
-		
+
 		#pIP config.vm.network :private_network, ip: "pIP"
         #pAPACHEPORT config.vm.network :forwarded_port, guest: 80, host: pAPACHEPORT, auto_correct: true
         #pMYSQLPORT config.vm.network :forwarded_port, guest: 3306, host: pMYSQLPORT, auto_correct: true
