@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-PUBLIC_DIR='pPUBDIR'
-
 echo "Adding repositories.."
 sudo add-apt-repository -y ppa:ondrej/php5-5.6
 sudo apt-get update && sudo apt-get -y upgrade
@@ -17,8 +15,8 @@ sudo apt-get install -y php5-mcrypt
 # setup hosts file
 VHOST=$(cat <<EOF
 <VirtualHost *:80>
-	DocumentRoot "${PUBLIC_DIR}"
-	<Directory "${PUBLIC_DIR}">
+	DocumentRoot "${1}"
+	<Directory "${1}">
 		AllowOverride All
 		Require all granted
 	</Directory>

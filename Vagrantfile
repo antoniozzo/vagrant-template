@@ -1,29 +1,87 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+name = "[name]"
+boxName = "[boxName]"
+boxUrl = "[boxUrl]"
+syncDir = "[syncDir]"
+memory = "[memory]"
+ip = "[ip]"
+vhost = "[vhost]"
+git = "[git]"
+node = "[node]"
+php = "[php]"
+pubDir = "[pubDir]"
+composer = "[composer]"
+mysql = "[mysql]"
+dbName = "[dbName]"
+dbPass = "[dbPass]"
+apachePort = "[apachePort]"
+mysqlPort = "[mysqlPort]"
+sshPort = "[sshPort]"
+app = "[app]"
+
 Vagrant.configure("2") do |config|
-	config.vm.define :pNAME do |config|
-		config.vm.box = "pBOXNAME"
-		config.vm.box_url = "pBOXURL"
-
-		#pIP config.vm.network :private_network, ip: "pIP"
-        #pAPACHEPORT config.vm.network :forwarded_port, guest: 80, host: pAPACHEPORT, auto_correct: true
-        #pMYSQLPORT config.vm.network :forwarded_port, guest: 3306, host: pMYSQLPORT, auto_correct: true
-        #pSSHPORT config.vm.network :forwarded_port, guest: 22, host: pSSHPORT, auto_correct: true
-
-		config.vm.hostname = "pNAME"
-		config.vm.synced_folder "./", "pTDIR", :mount_options => ["dmode=777", "fmode=666"]
+	config.vm.define :"#{name}" do |config|
+		config.vm.box      = boxName
+		config.vm.box_url  = boxUrl
+		config.vm.hostname = name
+		config.vm.synced_folder "./", "#{syncDir}", :mount_options => ["dmode=777", "fmode=666"]
 
 		config.vm.provider :virtualbox do |v|
 			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-			v.customize ["modifyvm", :id, "--memory", pMEM]
+			v.customize ["modifyvm", :id, "--memory", memory]
+		end
+
+		if ip
+			config.vm.network :private_network, ip: "#{ip}"
+		end
+
+		if apachePort
+			config.vm.network :forwarded_port, guest: 80, host: apachePort, auto_correct: true
+		end
+
+		if mysqlPort
+			config.vm.network :forwarded_port, guest: 3306, host: mysqlPort, auto_correct: true
+		end
+
+		if sshPort
+			config.vm.network :forwarded_port, guest: 22, host: sshPort, auto_correct: true
 		end
 
 		config.vm.provision :shell, path: "provision/server.sh"
-		#pGIT config.vm.provision :shell, path: "provision/git.sh"
-		#pNODE config.vm.provision :shell, path: "provision/node.sh"
-		#pPHP config.vm.provision :shell, path: "provision/php.sh"
-		#pCOMPOSER config.vm.provision :shell, path: "provision/composer.sh"
-		#pMYSQL config.vm.provision :shell, path: "provision/mysql.sh"
+
+		if git == "1"
+			config.vm.provision :shell, path: "provision/git.sh"
+		end
+
+		if node == "1"
+			config.vm.provision :shell, path: "provision/node.sh"
+		end
+
+		if php == "1"
+			config.vm.provision :shell do |s|
+				s.path = "provision/php.sh"
+				s.args = "#{pubDir}"
+			end
+		end
+
+		if composer == "1"
+			config.vm.provision :shell, path: "provision/composer.sh"
+		end
+
+		if mysql == "1"
+			config.vm.provision :shell do |s|
+				s.path = "provision/mysql.sh"
+				s.args = "#{dbName} #{dbPass} #{php}"
+			end
+		end	
+
+		if app == "1"
+			config.vm.provision :shell do |s|
+				s.path = "provision/app.sh"
+				s.args = "gulp #{name}"
+			end
+		end
 	end
 end

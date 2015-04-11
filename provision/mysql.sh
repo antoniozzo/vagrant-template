@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
- 
-# vars
-DBPASS='pDBPASS'
-DBNAME='pDBNAME'
 
 echo "Installing mysql.."
-sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password $DBPASS"
-sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $DBPASS"
+sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password $2"
+sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $2"
 sudo apt-get -y install mysql-server
 
-#pPHPMYSQL echo "Installing php5-mysql.."
-#pPHPMYSQL sudo apt-get install php5-mysql
+if [ $3 == "1" ]; then 
+	echo "Installing php5-mysql.."
+	sudo apt-get install php5-mysql
+fi
 
 echo "Creating database.."
-sudo mysql -uroot -p$DBPASS -e "create database $DBNAME;"
+sudo mysql -uroot -p$2 -e "create database $1;"
