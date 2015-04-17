@@ -80,7 +80,7 @@ Vagrant.configure("2") do |config|
 		if app == "1"
 			config.vm.provision :shell do |s|
 				s.path = "provision/app.sh"
-				s.args = "gulp #{name}"
+				s.args = "#{name} #{pubDir} gulp wordpress"
 			end
 		end
 	end
