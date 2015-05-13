@@ -1,25 +1,24 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-name = "[name]"
-boxName = "[boxName]"
-boxUrl = "[boxUrl]"
-syncDir = "[syncDir]"
-memory = "[memory]"
-ip = "[ip]"
-vhost = "[vhost]"
-git = "[git]"
-node = "[node]"
-php = "[php]"
-pubDir = "[pubDir]"
-composer = "[composer]"
-mysql = "[mysql]"
-dbName = "[dbName]"
-dbPass = "[dbPass]"
+name       = "[name]"
+boxName    = "[boxName]"
+boxUrl     = "[boxUrl]"
+syncDir    = "[syncDir]"
+memory     = "[memory]"
+ip         = "[ip]"
+vhost      = "[vhost]"
+git        = "[git]"
+node       = "[node]"
+php        = "[php]"
+pubDir     = "[pubDir]"
+composer   = "[composer]"
+mysql      = "[mysql]"
+dbName     = "[dbName]"
+dbPass     = "[dbPass]"
 apachePort = "[apachePort]"
-mysqlPort = "[mysqlPort]"
-sshPort = "[sshPort]"
-app = "[app]"
+mysqlPort  = "[mysqlPort]"
+sshPort    = "[sshPort]"
 
 Vagrant.configure("2") do |config|
 	config.vm.define :"#{name}" do |config|
@@ -49,39 +48,53 @@ Vagrant.configure("2") do |config|
 			config.vm.network :forwarded_port, guest: 22, host: sshPort, auto_correct: true
 		end
 
-		config.vm.provision :shell, path: "provision/server.sh"
+		config.vm.provision :shell do |s|
+			s.path = "provision/server/install.sh"
+			s.args = "#{vhost}"
+		end
 
+		# GIT
 		if git == "1"
-			config.vm.provision :shell, path: "provision/git.sh"
+			config.vm.provision :shell do |s|
+				s.path = "provision/git/install.sh"
+				s.args = "#{syncDir}"
+			end
 		end
 
+		# NodeJS
 		if node == "1"
-			config.vm.provision :shell, path: "provision/node.sh"
+			config.vm.provision :shell do |s|
+				s.path = "provision/node/install.sh"
+			end
 		end
 
+		# PHP
 		if php == "1"
 			config.vm.provision :shell do |s|
-				s.path = "provision/php.sh"
+				s.path = "provision/php/install.sh"
 				s.args = "#{pubDir}"
 			end
+
+			# Composer
+			if composer == "1"
+				config.vm.provision :shell do |s|
+					s.path = "provision/composer/install.sh"
+					s.args = "#{name} #{pubDir}"
+				end
+			end
 		end
 
-		if composer == "1"
-			config.vm.provision :shell, path: "provision/composer.sh"
-		end
-
+		# MySql
 		if mysql == "1"
 			config.vm.provision :shell do |s|
-				s.path = "provision/mysql.sh"
+				s.path = "provision/mysql/install.sh"
 				s.args = "#{dbName} #{dbPass} #{php}"
 			end
-		end	
+		end
 
-		if app == "1"
-			config.vm.provision :shell do |s|
-				s.path = "provision/app.sh"
-				s.args = "#{name} #{pubDir} gulp wordpress"
-			end
+		config.vm.provision :shell do |s|
+			s.path = "provision/server/boot.sh"
+			s.args = "#{syncDir}"
 		end
 	end
 end
